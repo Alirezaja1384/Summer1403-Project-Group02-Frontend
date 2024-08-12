@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // Extarcts the added commits and prints them
 var core = require("@actions/core");
-var github_1 = require("@actions/github");
+var github = require("@actions/github");
 var VALID_EMOJI = "✅";
 var INVALID_EMOJI = "❌";
 var ALLOWED_COMMIT_TYPES = [
@@ -60,15 +60,16 @@ var run = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                if (github_1.context.eventName !== "pull_request") {
+                if (github.context.eventName !== "pull_request") {
                     core.setFailed("This action is only supported for pull requests");
                     return [2 /*return*/];
                 }
-                prNumber = github_1.context.payload.pull_request.number;
-                return [4 /*yield*/, (0, github_1.getOctokit)(core.getInput("token"))
+                prNumber = github.context.payload.pull_request.number;
+                return [4 /*yield*/, github
+                        .getOctokit(core.getInput("token"))
                         .rest.pulls.listCommits({
-                        owner: github_1.context.repo.owner,
-                        repo: github_1.context.repo.repo,
+                        owner: github.context.repo.owner,
+                        repo: github.context.repo.repo,
                         pull_number: prNumber,
                     })
                         .then(function (_a) {
