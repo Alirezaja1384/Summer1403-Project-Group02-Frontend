@@ -16,6 +16,6 @@ jobs:
               uses: actions/checkout@v4
 
             - name: "Validate conventional commit messages"
-              uses: Alirezaja1384/Summer1403-Project-Group02-Deployment/pr-conventional-commit
+              uses: Alirezaja1384/Summer1403-Project-Group02-Deployment/.github/actions/pr-conventional-commit
               with:
                   token: ${{ secrets.GITHUB_TOKEN }}
