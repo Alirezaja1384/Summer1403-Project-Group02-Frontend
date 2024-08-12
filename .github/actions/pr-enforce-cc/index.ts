@@ -31,17 +31,16 @@ const run = async () => {
 
     const prNumber = github.context.payload.pull_request!.number;
 
-    const [validCommits, invalidCommits]: [string[], string[]] =
-        await core.group("Commits", async () => {
-            const { data } = await github
-                .getOctokit(core.getInput("token"))
-                .rest.pulls.listCommits({
-                    owner: github.context.repo.owner,
-                    repo: github.context.repo.repo,
-                    pull_number: prNumber,
-                });
-
-            return data.reduce(
+    core.startGroup("Validating commits");
+    const [validCommits, invalidCommits]: [string[], string[]] = await github
+        .getOctokit(core.getInput("token"))
+        .rest.pulls.listCommits({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            pull_number: prNumber,
+        })
+        .then(({ data }) =>
+            data.reduce(
                 (acc, { commit }) => {
                     const message = commit.message;
                     const valid = isCommitValid(message);
@@ -54,13 +53,14 @@ const run = async () => {
                     return acc;
                 },
                 [[], []] as [string[], string[]]
-            );
-        });
+            )
+        );
+    core.endGroup();
 
-    await core.group("Commit stats", async () => {
-        core.info(`Valid commits: ${validCommits.length}`);
-        core.info(`Invalid commits: ${invalidCommits.length}`);
-    });
+    core.startGroup("Commit stats");
+    core.info(`Valid commits: ${validCommits.length}`);
+    core.info(`Invalid commits: ${invalidCommits.length}`);
+    core.endGroup();
 
     const isValid = invalidCommits.length === 0;
 
