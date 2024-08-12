@@ -31,32 +31,39 @@ const run = async () => {
 
     const prNumber = github.context.payload.pull_request!.number;
 
-    const [validCommits, invalidCommits]: [string[], string[]] = await github
-        .getOctokit(core.getInput("token"))
-        .rest.pulls.listCommits({
-            owner: github.context.repo.owner,
-            repo: github.context.repo.repo,
-            pull_number: prNumber,
-        })
-        .then(({ data }) => {
-            return data.reduce(
-                (acc, { commit }) => {
-                    const message = commit.message;
-                    const valid = isCommitValid(message);
+    const [validCommits, invalidCommits]: [string[], string[]] =
+        await core.group("Commits", () =>
+            github
+                .getOctokit(core.getInput("token"))
+                .rest.pulls.listCommits({
+                    owner: github.context.repo.owner,
+                    repo: github.context.repo.repo,
+                    pull_number: prNumber,
+                })
+                .then(({ data }) => {
+                    return data.reduce(
+                        (acc, { commit }) => {
+                            const message = commit.message;
+                            const valid = isCommitValid(message);
 
-                    core.info(
-                        `${valid ? VALID_EMOJI : INVALID_EMOJI} ${message}`
+                            core.info(
+                                `${
+                                    valid ? VALID_EMOJI : INVALID_EMOJI
+                                } ${message}`
+                            );
+                            acc[valid ? 0 : 1].push(message);
+
+                            return acc;
+                        },
+                        [[], []] as [string[], string[]]
                     );
-                    acc[valid ? 0 : 1].push(message);
+                })
+        );
 
-                    return acc;
-                },
-                [[], []] as [string[], string[]]
-            );
-        });
-
+    core.startGroup("Commit stats");
     core.info(`Valid commits: ${validCommits.length}`);
     core.info(`Invalid commits: ${invalidCommits.length}`);
+    core.endGroup();
 
     const isValid = invalidCommits.length === 0;
 
