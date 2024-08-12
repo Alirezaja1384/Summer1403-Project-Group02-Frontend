@@ -1,6 +1,10 @@
 name: 'Validate conventional commit messages'
 description: 'Validate conventional commit messages of newly added commits.'
-inputs: {}
+inputs:
+  token:
+    required: true
+    description: The github token
+
 outputs:
   valid:
     description: 'Whether the commits are valid ("true" | "false")'
