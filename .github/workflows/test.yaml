@@ -3,9 +3,16 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    outputs:
+      has_coverage: ${{ steps.coverage.outputs.has_coverage }}
+      coverage_b64: ${{ steps.coverage.outputs.coverage_b64 }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up node
