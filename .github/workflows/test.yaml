@@ -29,7 +29,11 @@ jobs:
         run: |
           output="$(npm run test:ci)"
           echo "$output"
-          echo "output-b64=$(echo -n "$output" | base64)" >> "$GITHUB_OUTPUT"
+          {
+            echo "output-b64<<EOF"
+            echo "$(echo -n "$output" | base64)"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Extract coverage
         id: coverage
