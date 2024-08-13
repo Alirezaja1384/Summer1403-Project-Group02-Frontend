@@ -29,16 +29,12 @@ jobs:
         run: |
           output="$(npm run test:ci)"
           echo "$output"
-
-          {
-            echo "output<<EOF"
-            echo "$output" | sed "s/>/\\\\>/g"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+          echo "output-b64=$(echo -n "$output" | base64)" >> "$GITHUB_OUTPUT"
 
       - name: Extract coverage
+        id: coverage
         run: |
-          coverage=$(echo "${{ steps.test.outputs.output }}" | sed -n '/Coverage summary/,$p')
+          test_output="$(echo "${{ steps.test.outputs.output-b64 }}" | base64 --decode)"
+          coverage="$(echo "$test_output"  | sed -n '/Coverage summary/,$p')"
           has_coverage=$(test "$coverage" != "" && echo true || echo false)
-          echo "has-coverage='$has_coverage'" >> $GITHUB_OUTPUT
-          echo "coverage='$coverage'" >> $GITHUB_OUTPUT
+          echo "coverage-b64=$(echo -n "$coverage" | base64)" >> "$GITHUB_OUTPUT"
