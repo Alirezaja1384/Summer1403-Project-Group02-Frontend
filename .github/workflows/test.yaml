@@ -1,3 +1,4 @@
+name: Run tests
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -26,15 +27,11 @@ jobs:
         env:
           CHROME_BIN: ${{ steps.chromedriver.outputs.chrome-path }}
         run: |
-          result=$(npm run test:ci)
-          exit_code=$?
-
-          echo "output=<<EOF" >> $GITHUB_OUTPUT
-          echo "$result" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-          echo "$result"
-          exit $exit_code
+          {
+            echo "output=<<EOF"
+            $(npm run test:ci)
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Extract coverage
         run: |
