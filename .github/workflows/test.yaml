@@ -31,7 +31,7 @@ jobs:
           echo "$output"
 
           {
-            echo "output=<<EOF"
+            echo "output<<EOF"
             echo "$output" | sed "s/>/\\\\>/g"
             echo "EOF"
           } >> "$GITHUB_OUTPUT""
