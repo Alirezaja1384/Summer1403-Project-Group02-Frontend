@@ -39,7 +39,7 @@ jobs:
         id: coverage
         run: |
           set -e
-          test_output="$(echo "${{ steps.test.outputs.output-b64 }}" | base64 --decode)"
+          test_output="$(echo "${{ steps.test.outputs.output_b64 }}" | base64 --decode)"
           coverage="$(echo "$test_output"  | sed -n '/Coverage summary/,$p')"
           has_coverage=$(test "$coverage" != "" && echo true || echo false)
 
