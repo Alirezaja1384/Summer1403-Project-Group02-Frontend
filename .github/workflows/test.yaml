@@ -34,7 +34,7 @@ jobs:
             echo "output<<EOF"
             echo "$output" | sed "s/>/\\\\>/g"
             echo "EOF"
-          } >> "$GITHUB_OUTPUT""
+          } >> "$GITHUB_OUTPUT"
 
       - name: Extract coverage
         run: |
