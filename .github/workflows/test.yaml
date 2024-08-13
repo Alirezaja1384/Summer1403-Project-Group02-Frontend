@@ -27,11 +27,14 @@ jobs:
         env:
           CHROME_BIN: ${{ steps.chromedriver.outputs.chrome-path }}
         run: |
+          output="$(npm run test:ci)"
+          echo "$output"
+
           {
             echo "output=<<EOF"
-            npm run test:ci
+            echo "$output" | sed "s/>/\\\\>/g"
             echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+          } >> "$GITHUB_OUTPUT""
 
       - name: Extract coverage
         run: |
