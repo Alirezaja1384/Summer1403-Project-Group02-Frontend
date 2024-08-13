@@ -43,5 +43,7 @@ jobs:
           coverage="$(echo "$test_output"  | sed -n '/Coverage summary/,$p')"
           has_coverage=$(test "$coverage" != "" && echo true || echo false)
 
+          echo "$coverage"
+
           echo "has_coverage=$has_coverage" >> "$GITHUB_OUTPUT"
           echo "coverage_b64='$(echo -n "$coverage" | base64 --wrap=0)'" >> "$GITHUB_OUTPUT"
