@@ -53,7 +53,7 @@ jobs:
           echo "$coverage"
 
           echo "has_coverage=$has_coverage" >> "$GITHUB_OUTPUT"
-          echo "coverage_b64='$(echo -n "$coverage" | base64 --wrap=0)'" >> "$GITHUB_OUTPUT"
+          echo "coverage_b64=$(echo -n "$coverage" | base64 --wrap=0)" >> "$GITHUB_OUTPUT"
 
   notify:
     if: ${{ needs.test.outputs.has_coverage == 'true' }}
