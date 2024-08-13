@@ -28,13 +28,16 @@ jobs:
         run: |
           result=$(npm run test:ci)
           exit_code=$?
-          echo "output='$result'" >> $GITHUB_OUTPUT
+
+          echo "output=<<EOF" >> $GITHUB_OUTPUT
+          echo "$result" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
           echo "$result"
           exit $exit_code
 
       - name: Extract coverage
         run: |
-          set -e
           coverage=$(echo "${{ steps.test.outputs.output }}" | sed -n '/Coverage summary/,$p')
           has_coverage=$(test "$coverage" != "" && echo true || echo false)
           echo "has-coverage='$has_coverage'" >> $GITHUB_OUTPUT
