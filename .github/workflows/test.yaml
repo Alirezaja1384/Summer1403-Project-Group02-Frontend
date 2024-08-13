@@ -1,4 +1,3 @@
-# TODO: Coverage report
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -23,6 +22,20 @@ jobs:
         run: npm install
 
       - name: Run tests
+        id: test
         env:
           CHROME_BIN: ${{ steps.chromedriver.outputs.chrome-path }}
-        run: npm run test:ci
+        run: |
+          result=$(npm run test:ci)
+          exit_code=$?
+          echo "output=$result" >> $GITHUB_OUTPUT
+          echo "Output: $result"
+          exit $exit_code
+
+      - name: Extract coverage
+        run: |
+          set -e
+          coverage=$(echo "${{ steps.test.outputs.output }}" | sed -n '/Coverage summary/,$p')
+          has_coverage=$(test "$coverage" != "" && echo true || echo false)
+          echo "has-coverage=$has_coverage" >> $GITHUB_OUTPUT
+          echo "coverage=$coverage" >> $GITHUB_OUTPUT
